@@ -63,43 +63,10 @@ df_filled = data_file.fillna("NaN")  # Replace NaNs with the string "NaN"
 print("\nDataFrame After Filling Missing Values:")
 print(df_filled.head())
 
-# Plot Temperature Over Time
-plt.figure(figsize=(12, 6))
-plt.plot(df_filled['time'], df_filled['temp1'], label='Temp 1', color='orange', marker='o')
-plt.plot(df_filled['time'], df_filled['temp2'], label='Temp 2', color='blue', marker='o')
-plt.title('Temperature Over Time')
-plt.xlabel('Time')
-plt.ylabel('Temperature (°C)')
-plt.legend()
-plt.grid()
-plt.show()
-
-# Plot Acceleration Over Time
-plt.figure(figsize=(12, 6))
-plt.plot(df_filled['time'], df_filled['accx'], label='Acc X', color='red', marker='o')
-plt.plot(df_filled['time'], df_filled['accy'], label='Acc Y', color='green', marker='o')
-plt.plot(df_filled['time'], df_filled['accz'], label='Acc Z', color='purple', marker='o')
-plt.title('Acceleration Over Time')
-plt.xlabel('Time')
-plt.ylabel('Acceleration (m/s²)')
-plt.legend()
-plt.grid()
-plt.show()
-
-# Plot Movement Path (Latitude vs. Longitude)
-plt.figure(figsize=(12, 8))
-plt.plot(df_filled['longitude'], df_filled['latitude'], color='teal', marker='o')
-plt.title('Movement Path (Latitude vs. Longitude)')
-plt.xlabel('Longitude')
-plt.ylabel('Latitude')
-plt.grid()
-plt.axis('equal')  # Equal scaling for both axes
-plt.show()
-
 # Plot Pressure Over Time
 plt.figure(figsize=(12, 6))
-plt.plot(df_filled['time'], df_filled['pressure1'], label='Pressure 1', color='blue', marker='o')
-plt.plot(df_filled['time'], df_filled['pressure2'], label='Pressure 2', color='orange', marker='o')
+plt.plot(df_filled['time'], df_filled['pressure1'], label='Pressure 1', color='blue')
+plt.plot(df_filled['time'], df_filled['pressure2'], label='Pressure 2', color='orange')
 plt.title('Pressure Over Time')
 plt.xlabel('Time')
 plt.ylabel('Pressure (hPa)')
@@ -107,14 +74,4 @@ plt.legend()
 plt.grid()
 plt.show()
 
-# Plot Magnetometer Data
-plt.figure(figsize=(12, 6))
-plt.plot(df_filled['time'], df_filled['magx'], label='Mag X', color='red', marker='o')
-plt.plot(df_filled['time'], df_filled['magy'], label='Mag Y', color='green', marker='o')
-plt.plot(df_filled['time'], df_filled['magz'], label='Mag Z', color='purple', marker='o')
-plt.title('Magnetometer Data Over Time')
-plt.xlabel('Time')
-plt.ylabel('Magnetic Field (uT)')
-plt.legend()
-plt.grid()
-plt.show()
+
