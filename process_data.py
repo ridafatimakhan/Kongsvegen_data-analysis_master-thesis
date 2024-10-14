@@ -6,9 +6,14 @@ import seaborn as sns
 sns.set(style="darkgrid")
 
 # Define the path to the data file
-# file_path = 'M24-0721154941.txt'
-# file_path = 'M24-0718153650.txt'
-file_path = 'M24-0721132106.txt'
+# file_path = './21072021/M24-0721132106.txt'
+# file_path = 'H:/Rida/21072021/21072021/M24/raw/M24-0721154941.txt'
+# file_path = 'H:/Rida/21072021/21072021/M24/w_M24-0721132106.txt', operands coming
+# file_path = 'H:/Rida/18072021/18072021/M03/M030718173700.txt'
+file_path = 'H:/Rida/18072021/18072021/M10/M100718173756.txt'
+
+ 
+
 
 # Define column names for the dataset (first 17 columns)
 column_names = [
