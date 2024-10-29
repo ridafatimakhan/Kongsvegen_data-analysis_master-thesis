@@ -2,17 +2,13 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 from io import StringIO
-from scipy import stats
+import os
 
 # Configure seaborn for better aesthetics
 sns.set(style="darkgrid")
 
 # Define the path to the data file
-# file_path = 'H:/Rida/15072021/15072021/M22/other/M220715162024.txt'
-# file_path = 'H:/Rida/18072021/18072021/M24/Raw/M24-0718173840.txt'
-file_path = 'H:/Rida/13072021/13072021/M13/other/M130713081527.txt'
-
-
+file_path = 'H:/Rida/18072021/18072021/M23/Raw/M23-0718153648.txt'
 
 # Define column names for the dataset (first 17 columns)
 column_names = [
@@ -70,7 +66,7 @@ if data_file is not None:
     print(data_file.isnull().sum())
     
     # Convert the 'time' column from sample index (frequency-based) to minutes
-    frequency = 100  # 100 Hz
+    frequency = 50  # 50 Hz
     first_time_stamp = data_file['time'].iloc[0]  # Get the first time stamp
     data_file['time_minutes'] = (data_file['time'] - first_time_stamp) / frequency / 60  # Adjust to start from the first timestamp
     
@@ -92,26 +88,44 @@ if data_file is not None:
     print(f"\nTimestamp of Maximum Variance in Pressure 1: {max_variance_time_stamp}")
     print(f"Maximum Variance Time (in minutes): {max_variance_time_minutes}")
 
-# Check if there are any valid values in 'pressure1' and 'pressure2'
-if data_file['pressure1'].notnull().sum() > 0 and data_file['pressure2'].notnull().sum() > 0:
-    # Plot the data for pressure1 and pressure2 over time in minutes
-    plt.figure(figsize=(10, 6))
-    
-    # Plot pressure1
-    sns.lineplot(data=data_file, x='time_minutes', y='pressure1', label='Pressure 1', color='blue')
-    
-    # Plot pressure2
-    sns.lineplot(data=data_file, x='time_minutes', y='pressure2', label='Pressure 2', color='green')
-    
-    # Add labels and title
-    plt.title('Pressure over Time')
-    plt.xlabel('Time (minutes)')
-    plt.ylabel('Pressure [mbar]')
-    # plt.xlim (-1,20)
-    # plt.ylim (980,1010)
-    # Display the plot
-    plt.legend()
-    plt.tight_layout()
-    plt.show()
-else:
-    print("No valid data to plot for 'pressure1' and 'pressure2'.")
+    # Filter the data to only include the first 20 minutes
+    data_file_20min = data_file[data_file['time_minutes'] <= 20]
+
+    # Verify the filtered data
+    print("Filtered DataFrame (first 20 minutes):")
+    print(data_file_20min.head())
+
+    # Check if there are any valid values in 'pressure1' and 'pressure2' for the filtered data
+    if data_file_20min['pressure1'].notnull().sum() > 0 and data_file_20min['pressure2'].notnull().sum() > 0:
+        # Plot the data for pressure1 and pressure2 over time in minutes
+        plt.figure(figsize=(10, 6))
+        
+        # Plot pressure1
+        sns.lineplot(data=data_file_20min, x='time_minutes', y='pressure1', label='Pressure 1', color='green')
+        
+        # Plot pressure2
+        sns.lineplot(data=data_file_20min, x='time_minutes', y='pressure2', label='Pressure 2', color='blue')
+        
+        # Add labels and title
+        plt.title('Pressure over Time (20 Minutes)')
+        plt.xlabel('Time (minutes)')
+        plt.ylabel('Pressure [mbar]')
+        plt.legend()
+        plt.tight_layout()
+        plt.show()
+    else:
+        print("No valid data to plot for 'pressure1' and 'pressure2' in the first 20 minutes.")
+ # Define the output directory and file name
+    output_dir = 'H:/Rida/clean_data/18072021/M23/clean data'
+    output_file = 'M23-0718153648.txt.csv'
+
+    # Create the output directory if it doesn't exist
+    os.makedirs(output_dir, exist_ok=True)
+
+    # Define the full path for the output file
+    output_file_path = os.path.join(output_dir, output_file)
+
+    # Save the filtered DataFrame to a CSV file
+    data_file_20min.to_csv(output_file_path, index=False)
+
+    print(f"Filtered data saved to: {output_file_path}")
