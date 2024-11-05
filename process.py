@@ -8,7 +8,7 @@ import os
 sns.set(style="darkgrid")
 
 # Define the path to the data file
-file_path = 'H:/Rida/18072021/18072021/M23/Raw/M23-0718153648.txt'
+file_path = 'H:/Rida/13072021/M130713150904.txt'
 
 # Define column names for the dataset (first 17 columns)
 column_names = [
@@ -116,8 +116,8 @@ if data_file is not None:
     else:
         print("No valid data to plot for 'pressure1' and 'pressure2' in the first 20 minutes.")
  # Define the output directory and file name
-    output_dir = 'H:/Rida/clean_data/18072021/M23/clean data'
-    output_file = 'M23-0718153648.txt.csv'
+    output_dir = 'H:/Rida/13072021/clean data'
+    output_file = 'M130713150904.txt.csv'
 
     # Create the output directory if it doesn't exist
     os.makedirs(output_dir, exist_ok=True)
