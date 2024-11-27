@@ -1,27 +1,54 @@
-# Thesis
+# Thesis: Signal Processing, Feature Detection, and Data Validation of Low-Cost Sensing Drifter Data
 
-Signal processing, feature detection, and data validation of low-cost sensing drifter data.
+This project focuses on analyzing and validating time-series data collected by low-cost sensing drifters. The drifters, equipped with pressure sensors, operate in subsurface environments to collect essential data. The scripts in this repository are part of **Step 1**, involving initial data screening, cleaning, and visualization.
 
-## initial data cleaning
+---
 
-    Discarded any files containing frozen signals to ensure only valid data was analysed. This data sheet is on shared drive as well.
+## Initial Data Cleaning
 
-### screening_plott.py
+- Files containing **frozen signals** (constant or non-varying data) were discarded to ensure only valid and reliable data was included in the analysis.  
+- The cleaned dataset has been saved to a shared drive for future reference.
 
-This file i.e: "screening_plott.py" is the single python script for "datascreening.py" and "plotting.py" inside the step1 folder.
+---
 
-To run "screening_plott.py": 1. define the path to the data file, 2. then define the desired output directory, 3. run "python screening_plotting.py"
+## `screening_plott.py`
 
-Below is the summary of what the code does.
+This script combines the functionalities of two separate scripts, `datascreening.py` and `plotting.py`, to perform data screening and visualization in a single step.  
 
-#### datascreening.py
+### How to Run
 
-    This Python script processes a dataset of time-series sensor data, calculates rolling variance for two pressure readings (pressure1 and pressure2), identifies regions of interest (ROIs) based on a variance threshold, and saves filtered data to files for further analysis.
+1. **Define the Data Path**: Specify the path to the dataset you want to process.
+2. **Set the Output Directory**: Provide a directory where the output files will be saved.
+3. **Execute the Script**: Run the following command in the terminal:
 
-##### plotting.py
+   ```bash
+   python screening_plott.py
 
-This script is  visualizes filtered pressure data from the previously saved filtered_pressure1.txt file. It creates a plot showing how pressure1 and pressure2 change over time, then saves the plot as an image file for reference.
+## Summary of Code Functionality
 
-These are the data points from the original dataset where the rolling variance for pressure1 or pressure2 was greater than the calculated threshold.
+### `datascreening.py`
 
-In other words, the plot will show the pressure values for the regions where the variance was high, indicating significant fluctuations in the sensor readings for pressure1 and pressure2
+This Python script processes a dataset of time-series sensor data with the following steps:
+
+1. **Calculate Rolling Variance**:
+   - Computes the rolling variance for two pressure readings, `pressure1` and `pressure2`.
+2. **Identify Regions of Interest (ROIs)**:
+   - Detects regions where the variance exceeds a specified threshold.
+3. **Save Filtered Data**:
+   - Outputs the filtered data for both `pressure1` and `pressure2` to separate text files for further analysis.
+
+### `plotting.py`
+
+This script visualizes the filtered pressure data created by `datascreening.py`:
+
+1. **Load Filtered Data**:
+   - Reads the `filtered_pressure1.txt` and `filtered_pressure2.txt` files.
+2. **Generate and Save Plot**:
+   - Creates a plot showing how `pressure1` and `pressure2` change over time.
+   - Highlights regions of significant fluctuations (high rolling variance).
+   - Saves the plot as an image file for reference.
+
+### Purpose
+
+- The output plot visualizes the data points from the original dataset where the rolling variance for `pressure1` or `pressure2` exceeded the threshold.
+- It highlights regions of high variability, indicating significant fluctuations in sensor readings for both pressure parameters.
