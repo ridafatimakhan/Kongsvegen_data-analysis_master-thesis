@@ -6,12 +6,22 @@ Signal processing, feature detection, and data validation of low-cost sensing dr
 
     Discarded any files containing frozen signals to ensure only valid data was analysed. This data sheet is on shared drive as well.
 
-### process.py
+### screening_plott.py
 
-    This code reads a sensor data file, processes it to calculate the rolling variance for a pressure column, and identifies the timestamp with the highest variance. It then filters the data to the first 20 minutes, visualizes the pressure data (p1 and p2) over this period, and saves the filtered data to a CSV file in a specified directory. The code also handles missing values and non-numeric entries by converting them to NaN for easier analysis.
+This file i.e: "screening_plott.py" is the single python script for "datascreening.py" and "plotting.py" inside the step1 folder.
 
-#### useful_data.py
+To run "screening_plott.py": 1. define the path to the data file, 2. then define the desired output directory, 3. run "python screening_plotting.py"
 
-    Outlier Removal: Using the filtered dataset(generated from process.py), applied the Interquartile Range (IQR) method to remove outliers from the pressure columns (pressure1 and pressure2). This method has helped produce a cleaner dataset.
+Below is the summary of what the code does.
 
-    This files creates a refined copy of the cleaned DataFrame, retaining only the first 17 columns.
+#### datascreening.py
+
+    This Python script processes a dataset of time-series sensor data, calculates rolling variance for two pressure readings (pressure1 and pressure2), identifies regions of interest (ROIs) based on a variance threshold, and saves filtered data to files for further analysis.
+
+##### plotting.py
+
+This script is  visualizes filtered pressure data from the previously saved filtered_pressure1.txt file. It creates a plot showing how pressure1 and pressure2 change over time, then saves the plot as an image file for reference.
+
+These are the data points from the original dataset where the rolling variance for pressure1 or pressure2 was greater than the calculated threshold.
+
+In other words, the plot will show the pressure values for the regions where the variance was high, indicating significant fluctuations in the sensor readings for pressure1 and pressure2
