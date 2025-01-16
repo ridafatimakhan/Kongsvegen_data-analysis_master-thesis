@@ -3,15 +3,13 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-# Configure Seaborn for better aesthetics
 sns.set(style="darkgrid")
 
 # Define the path to the data file
 input_file_path = 'H:/Rida/13072021/M16/M160713160519.txt'
 
 # Define the desired output directory
-output_directory = 'H:/Rida/filtered/13072021/M16/M160713160519.txt'
-
+output_directory = 'H:/Rida/filtered/13072021/M16/M160713160519'
 # Define column names for the dataset (first 17 columns)
 column_names = [
     'time', 'pressure1', 'temp1', 'pressure2', 'temp2',
@@ -27,10 +25,10 @@ data_file = pd.read_csv(
     names=column_names,
     delimiter=',',
     header=None,
-    na_values=['', ' '],  # Treat empty strings as NaN
+    na_values=['', ' '],  
     engine='python',
-    usecols=range(17),  # Use only the first 17 columns
-    on_bad_lines='skip'  # Skip lines with too many fields
+    usecols=range(17),  
+    on_bad_lines='skip'  
 )
 
 # Replace invalid entries with NaN and convert columns to numeric
@@ -50,7 +48,7 @@ data_file['rolling_variance1'] = data_file['pressure1'].rolling(window=window_si
 data_file['rolling_variance2'] = data_file['pressure2'].rolling(window=window_size).var()
 
 # Define a threshold for variance
-k = 1  # Multiplier for sensitivity
+k = 2 # Multiplier for sensitivity
 
 # Threshold for pressure1
 rolling_mean1 = data_file['rolling_variance1'].mean()
@@ -149,3 +147,6 @@ else:
     print("The plot contains sufficient data for analysis.")
 
 print("Data processing and visualization complete.")
+
+
+
