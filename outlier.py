@@ -6,10 +6,10 @@ import seaborn as sns
 sns.set(style="darkgrid")
 
 # Define the path to the data file
-input_file_path = 'H:/Rida/filtered/13072021/M16/M160713160519/filtered_pressure1.txt'
+input_file_path = 'H:/Rida/filtered/21072021/M24/raw/M24-0721154941/filtered_pressure1.txt'
 
 # Define the desired output directory
-output_directory = 'H:/Rida/filtered/13072021/M16/M160713160519'
+output_directory = 'H:/Rida/outlier_removed/21072021/M24/raw/M24-0721154941'
 # Ensure output directory exists
 os.makedirs(output_directory, exist_ok=True)
 
@@ -25,11 +25,12 @@ column_names = [
 
 # Read the data into a DataFrame (only the first 17 columns)
 data_file = pd.read_csv(
-     input_file_path,
+    input_file_path,
     delimiter='\t',  # Use tab as the delimiter
     names= column_names,  # Assign column names
     header=0,  # Use the first row as the header
-    usecols=['time', 'pressure1', 'pressure2'],  # Load only necessary columns
+    usecols=range(17), 
+    # usecols=['time', 'pressure1', 'pressure2'],  # Load only necessary columns
     na_values=['', ' '],  # Treat empty strings as NaN
     engine='python'
 )

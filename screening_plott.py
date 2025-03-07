@@ -6,10 +6,11 @@ import seaborn as sns
 sns.set(style="darkgrid")
 
 # Define the path to the data file
-input_file_path = 'H:/Rida/13072021/M16/M160713160519.txt'
+input_file_path = 'H:/Rida/11072021/M16/M160101000000.txt'
 
 # Define the desired output directory
-output_directory = 'H:/Rida/filtered/13072021/M16/M160713160519'
+output_directory = 'H:/Rida/filtered/11072021/M16/M160101000000'
+
 # Define column names for the dataset (first 17 columns)
 column_names = [
     'time', 'pressure1', 'temp1', 'pressure2', 'temp2',
@@ -28,7 +29,8 @@ data_file = pd.read_csv(
     na_values=['', ' '],  
     engine='python',
     usecols=range(17),  
-    on_bad_lines='skip'  
+    on_bad_lines='skip',
+    encoding='ISO-8859-1'
 )
 
 # Replace invalid entries with NaN and convert columns to numeric

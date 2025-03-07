@@ -33,7 +33,7 @@ This Python script processes a dataset of time-series sensor data with the follo
 1. **Calculate Rolling Variance**:
    - Computes the rolling variance for two pressure readings, `pressure1` and `pressure2`.
 2. **Identify Regions of Interest (ROIs)**:
-   - Detects regions where the variance exceeds a specified threshold.
+   - Detects regions where the variance exceeds a specified threshold (k=1).
 3. **Save Filtered Data**:
    - Outputs the filtered data for both `pressure1` and `pressure2` to separate text files for further analysis.
 
@@ -52,3 +52,15 @@ This script visualizes the filtered pressure data created by `datascreening.py`:
 
 - The output plot visualizes the data points from the original dataset where the rolling variance for `pressure1` or `pressure2` exceeded the threshold.
 - It highlights regions of high variability, indicating significant fluctuations in sensor readings for both pressure parameters.
+
+### simple.py
+
+- This file simply plots the pressure over time.
+
+### outlier.py
+
+- This file takes the output files data from the screening_plott.py script and removes outlier by IQR method and save the new data file and image for reference in the "outlier_removed" folder
+
+### plot.py
+
+- plot.py, simply plots the dataset after outlier removal step, just to check the data readings visually.
