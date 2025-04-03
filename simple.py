@@ -7,7 +7,7 @@ import seaborn as sns
 sns.set(style="darkgrid")
 
 # Define the path to the data file
-file_path =   'H:/Rida/21072021/M24/raw/M24-0721154941.txt'
+file_path = 'H:/Rida/outlier_removed/13072021/M14/M140713160508/filtered_pressure_cleaned.txt'
 
 # Define column names for the dataset (first 17 columns)
 column_names = [
