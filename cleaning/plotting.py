@@ -7,7 +7,6 @@ sns.set(style="darkgrid")
 
 # Define the path to the filtered pressure file
 file_path_pressure = 'H:/Rida/filtered/13072021/M16/M160713160519.txt/filtered_pressure1.txt'
-
 # Save the plot to a specific directory
 output_dir = 'H:/Rida/filtered/13072021/M16/M160713160519.txt'  
 output_file = f'{output_dir}/filtered_pressure_plot.png' 

@@ -6,10 +6,10 @@ import seaborn as sns
 sns.set(style="darkgrid")
 
 # Define the path to the data file
-input_file_path = 'H:/Rida/filtered/21072021/M24/raw/M24-0721154941/filtered_pressure1.txt'
+input_file_path = 'H:/Rida/new/13072021/M18/M180713151102/filtered_pressure1.txt'
 
 # Define the desired output directory
-output_directory = 'H:/Rida/outlier_removed/21072021/M24/raw/M24-0721154941'
+output_directory = 'H:/Rida/new/outlier_removed/M18/M180713151102'
 # Ensure output directory exists
 os.makedirs(output_directory, exist_ok=True)
 
@@ -58,21 +58,19 @@ data_file_cleaned = remove_outliers(data_file_cleaned, 'pressure2')
 output_file_path = os.path.join(output_directory, 'filtered_pressure_cleaned.txt')
 data_file_cleaned.to_csv(output_file_path, index=False, sep=',', header=True)
 
-# Plot the cleaned data
 plt.figure(figsize=(10, 6))
 plt.plot(data_file_cleaned['time_minutes'], data_file_cleaned['pressure1'], label='Pressure1', color='blue')
-plt.plot(data_file_cleaned['time_minutes'], data_file_cleaned['pressure2'], label='Pressure2', color='green')
-plt.title('Pressure Over Time (Cleaned Data)')
-plt.xlabel('Time (minutes)')
-plt.ylabel('Pressure')
-plt.legend()
+plt.plot(data_file_cleaned['time_minutes'], data_file_cleaned['pressure2'], label='Pressure2', color='orange')
+plt.xlabel('Time (minutes)', fontsize=20)
+plt.ylabel('Pressure (hPa)', fontsize=20)
+plt.ylim(985, 1027)  # Adjust y-axis limits as needed
+plt.xticks(fontsize=20)
+plt.yticks(fontsize=20)
+plt.legend(fontsize=18)
 plt.grid(True)
 
-# Save the plot
 plot_file_path = os.path.join(output_directory, 'pressure_plot_cleaned.png')
 plt.savefig(plot_file_path)
-
-# Show the plot
 plt.show()
 
 print(f"Cleaned data saved to: {output_file_path}")
