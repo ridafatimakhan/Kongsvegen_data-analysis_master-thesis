@@ -41,13 +41,13 @@ sns.lineplot(
 )
 
 # Plot Pressure 2 vs Time
-sns.lineplot(
-    data=sensor_data_file,
-    x='time_minutes',
-    y='pressure2',
-    label='Pressure 2',
-    color='orange'
-)
+# sns.lineplot(
+#     data=sensor_data_file,
+#     x='time_minutes',
+#     y='pressure2',
+#     label='Pressure 2',
+#     color='orange'
+# )
 
 # Add labels, title, and legend
 plt.xlabel('Time (minutes)', fontsize=14)

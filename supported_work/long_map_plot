@@ -1,0 +1,30 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Read data from the text file
+file_path = '76291969.txt'  # Replace with your actual file path
+data = np.loadtxt(file_path, skiprows=8)  # Skip first 8 rows
+
+# Extract latitude and longitude
+lat = data[:, 2]  # 3rd column
+lon = data[:, 3]  # 4th column
+
+# Create the plot
+plt.figure(figsize=(8, 8))
+plt.plot(lon, lat, linestyle='-', color='black', linewidth=2)
+
+# Mark start and end points
+plt.scatter(lon[0], lat[0], color='green', label="Start", zorder=3)
+plt.scatter(lon[-1], lat[-1], color='red', label="End", zorder=3)
+
+# Labels and title
+plt.xlabel('Longitude')
+plt.ylabel('Latitude')
+plt.title('Trajectory Plot')
+plt.legend()
+
+# Show grid for reference
+plt.grid(True, linestyle="--", alpha=0.5)
+
+# Display the plot
+plt.show()
