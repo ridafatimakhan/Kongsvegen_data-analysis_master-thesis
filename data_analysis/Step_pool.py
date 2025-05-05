@@ -6,7 +6,7 @@ import numpy as np
 
 sns.set(style="darkgrid")
 
-file_path = 'H:/Rida/Svalbard_data/Screened_data/18072021/M23/M23-0718144836.txt/filtered_pressure1.txt'
+file_path = 'H:/Rida/Svalbard_data/Screened_data/18072021/M04/M040718173701.txt/filtered_pressure1.txt'
 
 column_names = [
     'time', 'pressure1', 'temp1', 'pressure2', 'temp2',
@@ -216,9 +216,9 @@ for pool_start, pool_end in pools:
     ax1.axvspan(data_file['time_seconds'].iloc[pool_start],
                    data_file['time_seconds'].iloc[pool_end],
                    color='red', alpha=1.0, hatch='\\\\')
-ax1.set_ylabel('Acceleration X [$m/s^2$]', fontsize=14)
-ax1.legend(loc='upper right', fontsize=14)
-ax1.tick_params(axis='both', labelsize=14)
+ax1.set_ylabel('Acceleration X [$m/s^2$]', fontsize=18)
+ax1.legend(loc='upper right', fontsize=18)
+ax1.tick_params(axis='both', labelsize=18)
 
 # Acceleration Y
 ax2.plot(data_file['time_seconds'], accel_data_y, label='Lateral acceleration (unfiltered)', color='purple', alpha=0.5)
@@ -231,9 +231,9 @@ for pool_start, pool_end in pools:
     ax2.axvspan(data_file['time_seconds'].iloc[pool_start],
                    data_file['time_seconds'].iloc[pool_end],
                    color='red', alpha=1.0, hatch='\\\\')
-ax2.set_ylabel('Acceleration Y [$m/s^2$]', fontsize=14)
-ax2.legend(loc='upper right', fontsize=14)
-ax2.tick_params(axis='both', labelsize=14)
+ax2.set_ylabel('Acceleration Y [$m/s^2$]', fontsize=18)
+ax2.legend(loc='upper right', fontsize=18)
+ax2.tick_params(axis='both', labelsize=18)
 
 # Acceleration Z
 ax3.plot(data_file['time_seconds'], accel_data_z, label='Upward acceleration (unfiltered)', color='teal', alpha=0.5)
@@ -246,10 +246,10 @@ for pool_start, pool_end in pools:
     ax3.axvspan(data_file['time_seconds'].iloc[pool_start],
                    data_file['time_seconds'].iloc[pool_end],
                    color='red', alpha=1.0, hatch='\\\\')
-ax3.set_xlabel('Time [seconds]', fontsize=14)
-ax3.set_ylabel('Acceleration Z [$m/s^2$]', fontsize=14)
-ax3.legend(loc='upper right', fontsize=14)
-ax3.tick_params(axis='both', labelsize=14)
+ax3.set_xlabel('Time [seconds]', fontsize=18)
+ax3.set_ylabel('Acceleration Z [$m/s^2$]', fontsize=18)
+ax3.legend(loc='upper right', fontsize=18)
+ax3.tick_params(axis='both', labelsize=18)
 
 ax4.plot(data_file['time_seconds'], data_file['pressure1'],
          label='Pressure 1', color='blue', alpha=0.8)
@@ -264,12 +264,19 @@ for pool_start, pool_end in pools:
                data_file['time_seconds'].iloc[pool_end],
                color='red', alpha=1.0, hatch='\\\\')
 
-ax4.set_xlabel('Time [seconds]', fontsize=14)
-ax4.set_ylabel('Pressure', fontsize=14)
-ax4.legend(loc='upper right', fontsize=14)
-ax4.tick_params(axis='both', labelsize=14)
+ax4.set_xlabel('Time [seconds]', fontsize=18)
+ax4.set_ylabel('Pressure', fontsize=18)
+ax4.legend(loc='upper right', fontsize=18)
+ax4.tick_params(axis='both', labelsize=18)
 
+# plt.tight_layout()
+# plt.show()
+
+
+# Save the plot
+output_path = "H:/Rida/plots/accel_pressure_plot.pdf"
 plt.tight_layout()
+plt.savefig(output_path, dpi=300)  # You can change dpi for resolution
 plt.show()
 
 # Print step timings

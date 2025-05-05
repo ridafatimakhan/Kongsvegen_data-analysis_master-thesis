@@ -102,19 +102,25 @@ for idx, row in df.iterrows():
         rotation=90,  # Vertical text
         ha='center',  # Horizontal alignment
         va='bottom',  # Vertical alignment
-        fontsize=8,  # Adjust as needed
+        fontsize=10,  # Adjust as needed
         color='black'
     )
 
 # [Rest of the original formatting code remains the same]
 #plt.title('Sensor File Entries with File Labels', pad=20)  # Updated title
-plt.ylabel('Number of Step-pools')
+plt.ylabel('Number of Step-pools',  fontsize=14)
 plt.xticks(
     [pos for pos, label in date_label_positions],
-    [label for pos, label in date_label_positions]
+    [label for pos, label in date_label_positions],
+    fontsize=12
 )
-plt.ylim(top=df['Steps'].max() * 1.2)  # Add 20% headroom for labels
+plt.ylim(top=df['Steps'].max() * 1.22)  # Add 20% headroom for labels
 plt.grid(axis='y', linestyle=':', alpha=0.6)
-plt.legend(handles=legend_handles, title='Sensor', bbox_to_anchor=(1.065, 1.012))
+plt.legend(handles=legend_handles, title='Sensor', bbox_to_anchor=(1.065, 1.012), prop={'size': 10})
 plt.tight_layout()
+
+# Save the plot to a file (e.g., PNG format)
+plt.savefig("sensor_plot.pdf", dpi=300, bbox_inches='tight')  # You can change filename and format
+
+# Display the plot
 plt.show()
