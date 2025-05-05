@@ -1,3 +1,27 @@
+"""
+Script: Sensor_stall.py
+
+Description:
+
+This script should be run after obtaining the filtered pressure data from step 1 (cleaning). 
+It processes cleaned pressure and acceleration data from a sensor deployment.
+It performs the following steps:
+
+1. Loads the filtered sensor data from a specified file.
+2. Converts and standardizes the time format.
+3. Rotates body-frame acceleration data into the global frame.
+4. Applies a Kalman filter to smooth the acceleration data.
+5. Identifies flat (low-variance) regions in the forward acceleration signal.
+6. Highlights these flat regions on acceleration and pressure plots.
+7. Computes and prints statistics such as:
+   - Number of flat (frozen) periods detected.
+   - Total duration of sensor inactivity (frozen state).
+   - Total deployment time.
+
+This helps in evaluating the sensor's motion and detecting periods of inactivity/
+sensor stalling during deployment.
+"""
+
 import os
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -39,21 +63,21 @@ for col in column_names:
     if col != 'time':
         data_file[col] = pd.to_numeric(data_file[col], errors='coerce')
 
-# Convert time to seconds and minutes
+# time convertion to secs and minutes
 t_1 = data_file['time'].iloc[0]
 data_file['time_seconds'] = (data_file['time'] - t_1) * 0.001
 data_file['time_minutes'] = data_file['time_seconds'] / 60
 
-# Drop rows with NaNs in critical columns
+# drop rows with NaNs in critical columns
 data_file.dropna(subset=['accx', 'accy', 'accz'], inplace=True)
 
-# Function to rotate acceleration data into global frame
+# here function is defiend to rotate acceleration data into global frame
 def rotate_acceleration(accx, accy, accz, R_body_to_global):
     acc_body = np.array([accx, accy, accz])  # original body-frame
     acc_global = R_body_to_global @ acc_body
     return acc_global
 
-# Applying the rotation to the acceleration data in the DataFrame
+# applying the rotation to the acceleration data in the DataFrame
 data_file[['X_forward', 'Y_lateral', 'Z_upward']] = data_file.apply(
     lambda row: rotate_acceleration(row['accx'], row['accy'], row['accz'], R_body_to_global), axis=1, result_type="expand"
 )
@@ -74,31 +98,33 @@ def kalman_filter(accel_data, process_variance, measurement_variance, initial_st
     
     return np.array(filtered_data)
 
-# Example global acceleration data
+# example global acceleration data
 accel_data_x = data_file['X_forward'].values
 accel_data_y = data_file['Y_lateral'].values
 accel_data_z = data_file['Z_upward'].values
 
-# Apply Kalman filter
+# apply Kalman filter
 process_variance = 1e-4
 measurement_variance = 0.05
 filtered_accel_x = kalman_filter(accel_data_x, process_variance, measurement_variance)
 filtered_accel_y = kalman_filter(accel_data_y, process_variance, measurement_variance)
 filtered_accel_z = kalman_filter(accel_data_z, process_variance, measurement_variance)
 
-# Compute rolling variance for filtered_accel_x
+# compute rolling variance for filtered_accel_x
 window_size = 100  # Rolling window size
 rolling_variance = pd.Series(filtered_accel_x).rolling(window=window_size).var()
 
-# Identify regions where rolling variance is below threshold (e.g., 10% of the maximum variance)
+# identify regions where rolling variance is below threshold (e.g., 10% of the maximum variance)
 variance_threshold = 0.01 * rolling_variance.max()
 flat_regions = rolling_variance[rolling_variance < variance_threshold]
 
-# Adding a condition to check the duration of flat regions and mark if duration is greater than or equal to 1 second
+# adding a condition to check the duration of flat regions
+# and mark if duration is greater than or equal to 1 second
+
 time_threshold = 3 # 3 second duration for the flat region
 hatch_regions = []
 
-# Find the indices of the flat regions
+# find the indices of the flat regions
 start_idx = None
 for i in range(1, len(flat_regions)):
     if flat_regions.index[i] - flat_regions.index[i-1] == 1:
@@ -107,20 +133,20 @@ for i in range(1, len(flat_regions)):
         if i == len(flat_regions) - 1:
             end_idx = flat_regions.index[i]
             duration = data_file['time_seconds'][end_idx] - data_file['time_seconds'][start_idx]
-            if duration >= time_threshold:  # Only include if duration is >= 1 second
+            if duration >= time_threshold:  # include only if duration is >= 1 second
                 hatch_regions.append((start_idx, end_idx))
     else:
         if start_idx is not None:
             end_idx = flat_regions.index[i-1]
             duration = data_file['time_seconds'][end_idx] - data_file['time_seconds'][start_idx]
-            if duration >= time_threshold:  # Only include if duration is >= 1 second
+            if duration >= time_threshold:  # include only if duration is >= 1 second
                 hatch_regions.append((start_idx, end_idx))
         start_idx = None
 
-# Plotting with 3 subplots for X, Y, and Z acceleration
+# plotting with 3 subplots for X, Y, and Z acceleration
 fig, (ax1, ax2, ax3) = plt.subplots(3, 1, figsize=(16, 12), sharex=True)
 
-# Subplot 1: Acceleration X
+# subplot 1: Acceleration X
 ax1.plot(data_file['time_seconds'], accel_data_x, label='Forward acceleration (unfiltered)', color='blue', alpha=0.5)
 ax1.plot(data_file['time_seconds'], filtered_accel_x, label='Forward acceleration (filtered)', color='black', alpha=0.8)
 for start_idx, end_idx in hatch_regions:
@@ -130,7 +156,7 @@ ax1.set_ylabel('Acceleration X [$m/s^2$]' ,  fontsize=20)
 ax1.legend(loc='upper right' ,  fontsize=14)
 ax1.tick_params(axis='both', labelsize=20)  # Increase tick label size
 
-# Subplot 2: Acceleration Y
+# subplot 2: Acceleration Y
 ax2.plot(data_file['time_seconds'], accel_data_y, label='Lateral acceleration (unfiltered)', color='purple', alpha=0.5)
 ax2.plot(data_file['time_seconds'], filtered_accel_y, label='Lateral acceleration (filtered)', color='black', alpha=0.8)
 for start_idx, end_idx in hatch_regions:
@@ -140,7 +166,7 @@ ax2.set_ylabel('Acceleration Y [$m/s^2$]',  fontsize=20)
 ax2.legend(loc='upper right' ,  fontsize=14)
 ax2.tick_params(axis='both', labelsize=20)  # Increase tick label size
 
-# Subplot 3: Acceleration Z
+# subplot 3: Acceleration Z
 ax3.plot(data_file['time_seconds'], accel_data_z, label='Upward acceleration (unfiltered)', color='teal', alpha=0.5)
 ax3.plot(data_file['time_seconds'], filtered_accel_z, label='Upward acceleration (filtered)', color='black', alpha=0.8)
 for start_idx, end_idx in hatch_regions:
@@ -149,19 +175,19 @@ ax3.set_xlabel('Time [seconds]',  fontsize=20)
 ax3.set_ylabel('Acceleration Z [$m/s^2$]' ,  fontsize=20)
 #ax3.set_title('Filtered vs Unfiltered Acceleration Z')
 ax3.legend(loc='upper right' ,  fontsize=14)
-ax3.tick_params(axis='both', labelsize=20)  # Increase tick label size
+ax3.tick_params(axis='both', labelsize=20) 
 
 plt.tight_layout()
 plt.show()
 
 
-# Separate plot for pressure1 and pressure2
+# separate plot for pressure1 and pressure2
 fig_pressure, ax_pressure = plt.subplots(figsize=(12, 4))
 
 ax_pressure.plot(data_file['time_seconds'], data_file['pressure1'], label='Pressure 1', color='green')
 ax_pressure.plot(data_file['time_seconds'], data_file['pressure2'], label='Pressure 2', color='orange')
 
-# Add the same hatch regions from acceleration to pressure plot
+# add the same hatch regions from acceleration to pressure plot
 for start_idx, end_idx in hatch_regions:
     ax_pressure.axvspan(
         data_file['time_seconds'][start_idx],
@@ -173,24 +199,24 @@ for start_idx, end_idx in hatch_regions:
 ax_pressure.set_xlabel('Time [seconds]',  fontsize=20)
 ax_pressure.set_ylabel('Pressure [hPa]',  fontsize=20)
 #ax_pressure.set_title('Pressure1 and Pressure2 over Time with Flat Acceleration Regions')
-ax_pressure.tick_params(axis='both', labelsize=20)  # Adjust tick label size
+ax_pressure.tick_params(axis='both', labelsize=20)  
 ax_pressure.legend(loc='upper right',  fontsize=14)
 
 plt.tight_layout()
 plt.show()
 
-# 1. Total number of frozen sensor events
+# 1. total number of frozen sensor events
 num_frozen_events = len(hatch_regions)
 print(f"Total number of times the sensor was frozen (flat regions): {num_frozen_events}")
 
-# 2. Total time the sensor was frozen
+# 2. total time the sensor was frozen
 total_frozen_time = sum(
     data_file['time_seconds'][end] - data_file['time_seconds'][start]
     for start, end in hatch_regions
 )
 print(f"Total time the sensor was frozen: {total_frozen_time:.2f} seconds")
 
-# 3. Total deployment time
+# 3. total deployment time
 deployment_duration = data_file['time_seconds'].iloc[-1] - data_file['time_seconds'].iloc[0]
 print(f"Total deployment time: {deployment_duration:.2f} seconds")
 

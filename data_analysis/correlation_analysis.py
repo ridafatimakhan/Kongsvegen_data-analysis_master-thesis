@@ -4,19 +4,13 @@ import matplotlib.pyplot as plt
 import os
 from glob import glob
 
-# Define the root directory containing all dataset folders
 root_directory = "H:/Rida/Svalbard_data/outlier_removed/"
-
 # Find all 'filtered_pressure_cleaned.txt' files across subdirectories
 file_paths = glob(os.path.join(root_directory, "**", "filtered_pressure_cleaned.txt"), recursive=True)
-
-# List to store correlation data
-correlation_data = []
-
+correlation_data = [] # List to store correlation data
 # Iterate through all files and compute correlation
 for file_path in file_paths:
     try:
-        # Load the data
         sensor_data = pd.read_csv(
             file_path,
             delimiter=',',
@@ -26,12 +20,10 @@ for file_path in file_paths:
             encoding='ISO-8859-1'
         )
 
-        # Ensure 'time' column is numeric, drop invalid rows
         sensor_data['time'] = pd.to_numeric(sensor_data['time'], errors='coerce')
         sensor_data = sensor_data.dropna(subset=['time'])
 
-        # Compute correlation between Pressure 1 and Pressure 2
-        correlation = sensor_data['pressure1'].corr(sensor_data['pressure2'])
+        correlation = sensor_data['pressure1'].corr(sensor_data['pressure2']) # Calculate correlation between pressure1 and pressure2
 
         # Extract sensor folder name and date folder
         parts = file_path.split(os.sep)
