@@ -39,3 +39,9 @@ Also includes utility scripts for visual inspection and outlier handling:
 
 - **`plot.py`**  
   Visualizes the dataset *after outlier removal* to help inspect data quality visually.
+
+---
+
+##### Folder: `Svalbard_data`
+
+This folder contains two sub folders 'outlier_removed' and 'Screened_data'.  The difference is that `outlier_removed` contains data after applying IQR.
