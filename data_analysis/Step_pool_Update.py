@@ -112,7 +112,7 @@ MIN_REGION_DURATION = 0.001
 
 def detect_high_pressure_regions_dual(pressure1, pressure2, time_seconds, 
                                       window_size=WINDOW_SIZE, 
-                                      std_multiplier=3, 
+                                      std_multiplier=5, 
                                       min_duration=MIN_REGION_DURATION):
     """
     Detects high-pressure regions using each sensor's own STD + median.
