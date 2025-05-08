@@ -82,39 +82,39 @@ filtered_accel_x = kalman_filter(accel_data_x, process_variance, measurement_var
 filtered_accel_y = kalman_filter(accel_data_y, process_variance, measurement_variance)
 filtered_accel_z = kalman_filter(accel_data_z, process_variance, measurement_variance)
 
-# Parameters for step detection
-Z_THRESHOLD = 5  # (lower = more sensitive)
-MIN_STEP_DURATION = 5  # Minimum samples to count as a step
+# STEP DETECTION (UPDATED)
+# Normalize Z-axis
+norm_filtered_accel_z = (filtered_accel_z - np.mean(filtered_accel_z)) / np.std(filtered_accel_z)
 
-# Detect steps where filtered_accel_z < Z_THRESHOLD
-z_low = filtered_accel_z < Z_THRESHOLD
+# Threshold based on standard deviation
+Z_THRESHOLD = np.std(norm_filtered_accel_z) * 1.5
+
+# Minimum duration for steps (in samples)
+MIN_STEP_DURATION = 5
+
+# Identify low Z values (potential steps)
+z_low = norm_filtered_accel_z < -Z_THRESHOLD
 z_low_indices = np.where(z_low)[0]
 
-# Group consecutive low-Z periods (steps)
+# Group consecutive low-Z values as steps
 steps = []
 if len(z_low_indices) > 0:
     current_step = [z_low_indices[0]]
     for i in range(1, len(z_low_indices)):
-        if z_low_indices[i] - z_low_indices[i-1] == 1:  # Consecutive samples
+        if z_low_indices[i] - z_low_indices[i-1] == 1:
             current_step.append(z_low_indices[i])
         else:
             if len(current_step) >= MIN_STEP_DURATION:
                 steps.append((current_step[0], current_step[-1]))
             current_step = [z_low_indices[i]]
-    # Add the last step if valid
     if len(current_step) >= MIN_STEP_DURATION:
         steps.append((current_step[0], current_step[-1]))
 
-# Parameters for pool detection
-WINDOW_SIZE = 2          # Rolling window size
-MIN_REGION_DURATION = 0.001  # Minimum consecutive samples to form a region
+# Pool detection helpers
+WINDOW_SIZE = 2
+MIN_REGION_DURATION = 0.001
 
 def find_undisturbed_regions(pressure1, pressure2, time_seconds, window_size=50, variance_threshold=2.0):
-    """
-    Find regions where both pressure sensors show low variance (undisturbed).
-    Returns the STD calculated from these regions.
-    """
-    # Calculate rolling variance
     var1 = pd.Series(pressure1).rolling(window_size).var().values
     var2 = pd.Series(pressure2).rolling(window_size).var().values
 
@@ -126,46 +126,38 @@ def find_undisturbed_regions(pressure1, pressure2, time_seconds, window_size=50,
     if len(undisturbed_p1) > 0 and len(undisturbed_p2) > 0:
         combined_std = np.std(np.concatenate([undisturbed_p1, undisturbed_p2]))
     else:
-        # Fallback
         combined_std = np.std(np.concatenate([pressure1, pressure2])) * 0.1
         print("Warning: No undisturbed regions found, using fallback STD")
 
     return combined_std
 
-
-# Calculate combined_std before using it
+# Calculate baseline std
 combined_std = find_undisturbed_regions(
     data_file['pressure1'].values,
     data_file['pressure2'].values,
     data_file['time_seconds'].values
 )
-print("Fallback STD used?" if combined_std < 1 else "Good undisturbed STD used.")
+print("Fallback STD used?" if combined_std < 1 else "undisturbed STD used.")
 
 def detect_high_pressure_regions_dual(pressure1, pressure2, time_seconds, 
                                       window_size=WINDOW_SIZE, 
-                                      std_multiplier=8, 
+                                      std_multiplier=7, 
                                       min_duration=MIN_REGION_DURATION):
     """
     Detects high-pressure regions using baseline + STD-based dynamic threshold.
     """
     # 1. Calculate STD from undisturbed regions
     pressure_std = find_undisturbed_regions(pressure1, pressure2, time_seconds)
-    print(f"Calculated STD from undisturbed regions: {pressure_std:.2f}")
     
     # 2. Smooth the data
     smoothed_p1 = pd.Series(pressure1).rolling(window=window_size, center=True).mean().values
     smoothed_p2 = pd.Series(pressure2).rolling(window=window_size, center=True).mean().values
 
     # 3. Compute baseline mean
-    baseline = np.nanmean(np.concatenate([smoothed_p1, smoothed_p2]))
+    # baseline = np.nanmean(np.concatenate([smoothed_p1, smoothed_p2]))
+    baseline = np.nanmedian(np.concatenate([smoothed_p1, smoothed_p2]))
     dynamic_threshold = baseline + std_multiplier * pressure_std
-    print(f"Calculated STD from undisturbed regions: {pressure_std:.4f}")
-    print(f"Baseline mean pressure: {baseline:.2f}")
-    print(f"STD Multiplier: {std_multiplier}")
-    print(f"Dynamic threshold = Baseline ({baseline:.2f}) + {std_multiplier} × STD ({pressure_std:.4f})")
-    print(f"→ Final dynamic threshold: {dynamic_threshold:.2f}")
-
-
+    
     # 4. Identify high-pressure periods
     above_threshold = (smoothed_p1 > dynamic_threshold) | (smoothed_p2 > dynamic_threshold)
 
@@ -191,10 +183,15 @@ def detect_high_pressure_regions_dual(pressure1, pressure2, time_seconds,
     print(f"Max pressure2: {np.max(pressure2):.2f}")
     print(f"Final dynamic threshold: {dynamic_threshold:.2f}")
     
+    print(f"Calculated STD from undisturbed regions: {pressure_std:.2f}")
+    print(f"Calculated STD from undisturbed regions: {pressure_std:.4f}")
+    print(f"Baseline mean pressure: {baseline:.2f}")
+    print(f"STD Multiplier: {std_multiplier}")
+    print(f"Dynamic threshold = Baseline ({baseline:.2f}) + {std_multiplier} × STD ({pressure_std:.4f})")
+    print(f"→ Final dynamic threshold: {dynamic_threshold:.2f}")
     return regions
 
-
-# Detect high-pressure regions (pools)
+# Detect high-pressure regions
 pools = detect_high_pressure_regions_dual(
     data_file['pressure1'].values,
     data_file['pressure2'].values,
@@ -263,17 +260,14 @@ for pool_start, pool_end in pools:
     ax4.axvspan(data_file['time_seconds'].iloc[pool_start],
                 data_file['time_seconds'].iloc[pool_end],
                 color='red', alpha=1.0, hatch='\\\\')
-
 ax4.set_xlabel('Time [seconds]', fontsize=18)
 ax4.set_ylabel('Pressure', fontsize=18)
 ax4.legend(loc='upper right', fontsize=18)
 ax4.tick_params(axis='both', labelsize=18)
 
 plt.tight_layout()
-
-# Save the plot
 # output_path = "H:/Rida/plots/step_pool_plot.pdf"
-# plt.savefig(output_path, dpi=300)  
+# plt.savefig(output_path, dpi=300)
 plt.show()
 
 # Print step timings
