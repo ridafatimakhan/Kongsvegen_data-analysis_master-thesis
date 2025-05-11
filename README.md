@@ -42,6 +42,6 @@ Also includes utility scripts for visual inspection and outlier handling:
 
 ---
 
-##### Folder: `Svalbard_data`
+##### Folder: `Kongsvegen_data`
 
 This folder contains two sub folders 'outlier_removed' and 'Screened_data'.  The difference is that `outlier_removed` contains data after applying IQR.

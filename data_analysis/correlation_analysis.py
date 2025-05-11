@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import os
 from glob import glob
 
-root_directory = "H:/Rida/Svalbard_data/outlier_removed/"
+root_directory = "H:/Rida/Kongsvegen_data/outlier_removed/"
 # Find all 'filtered_pressure_cleaned.txt' files across subdirectories
 file_paths = glob(os.path.join(root_directory, "**", "filtered_pressure_cleaned.txt"), recursive=True)
 correlation_data = [] # List to store correlation data

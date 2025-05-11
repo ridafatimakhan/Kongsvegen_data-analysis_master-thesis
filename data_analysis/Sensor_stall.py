@@ -30,7 +30,7 @@ import numpy as np
 
 sns.set(style="darkgrid")
 
-file_path = 'H:/Rida/Svalbard_data/Screened_data/18072021/M24/M24-0718173840.txt/filtered_pressure1.txt'
+file_path = 'H:/Rida/Kongsvegen_data/Screened_data/18072021/M24/M24-0718173840.txt/filtered_pressure1.txt'
 column_names = [
     'time', 'pressure1', 'temp1', 'pressure2', 'temp2',
     'accx', 'accy', 'accz',
