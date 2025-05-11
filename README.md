@@ -1,4 +1,4 @@
-# Thesis: Signal Processing, Feature Detection, and Data Validation of Low-Cost Sensing Drifter Data
+# Master thesis: Signal Processing, Feature Detection, and Data Validation of Low-Cost Sensing Drifter Data
 
 This project focuses on analyzing and validating time-series data collected by low-cost sensing drifters. The drifters, equipped with pressure sensors, operate in subsurface environments to collect essential data.
 
