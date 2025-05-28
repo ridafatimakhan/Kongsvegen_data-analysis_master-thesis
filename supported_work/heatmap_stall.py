@@ -66,7 +66,7 @@ fig, ax = plt.subplots(figsize=(10, 6))
 #norm = plt.Normalize(0, max_val)
 
 #Get colormap and normalize with fixed range 0-24
-cmap = plt.cm.Paired
+cmap = plt.cm.coolwarm
 norm = plt.Normalize(vmin=0, vmax=24)  # ← Key change
 
 
